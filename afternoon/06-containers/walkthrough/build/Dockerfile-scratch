@@ -1,0 +1,16 @@
+# This Dockerfile shows using a builder container and then
+# configuring the container to run the debugger from a scratch container.
+FROM golang:1.17 as builder
+
+WORKDIR /project
+
+COPY . .
+
+ENV CGO_ENABLED=0
+RUN go build -o /project/bin/app
+
+FROM scratch
+
+COPY --from=builder /project/bin/app /app
+
+CMD [ "/app" ]
